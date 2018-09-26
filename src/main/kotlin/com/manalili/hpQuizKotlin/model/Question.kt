@@ -1,9 +1,6 @@
 package com.manalili.hpQuizKotlin.model
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class Question(
@@ -11,5 +8,17 @@ data class Question(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Int,
         var question: String,
-        var choices: MutableMap<Int, String>) {
+
+        @OneToMany
+        var choices: List<Choice>) {
+//        var choices: MutableMap<String, String>) {
+
+
 }
+
+@Entity
+data class Choice(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Int,
+        val option: String, val value: String)
