@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping
 @Controller
 class HomeController {
     @GetMapping("/")
-    fun helloWorld() = "hello"
+    fun helloWorld() = "hpQuiz"
 
 }
