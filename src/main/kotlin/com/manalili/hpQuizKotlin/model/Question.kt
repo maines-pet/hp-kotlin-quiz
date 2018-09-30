@@ -6,19 +6,30 @@ import javax.persistence.*
 data class Question(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int,
-        var question: String,
+        @Column(name = "qId")
+        val id: Int? = null,
+        val question: String = "",
 
-        @OneToMany
-        var choices: List<Choice>) {
-//        var choices: MutableMap<String, String>) {
-
-
+        @OneToMany(cascade = arrayOf(CascadeType.ALL))
+        @JoinColumn(name = "questionIdToChoices", referencedColumnName = "qId")
+        var choice: List<Choice>? = listOf()
+) {
+    override fun toString(): String {
+        return "id = ${this.id} question = ${this.question}"
+    }
 }
+
+
+
 
 @Entity
 data class Choice(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int,
-        val option: String, val value: String)
+        val id: Int? = null,
+        val displayText: String,
+        val answer: Boolean,
+        @Column(name = "questionIdToChoices")
+        val questionId: Int? = null){
+    override fun toString() = "id = ${this.id}"
+}
