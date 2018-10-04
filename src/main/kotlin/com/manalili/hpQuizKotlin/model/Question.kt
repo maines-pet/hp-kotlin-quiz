@@ -27,9 +27,9 @@ data class Choice(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Int? = null,
-        val displayText: String,
-        val answer: Boolean,
+        val displayText: String = "",
+        val answer: Boolean = false,
         @Column(name = "questionIdToChoices")
         val questionId: Int? = null){
-    override fun toString() = "id = ${this.id}"
+    override fun toString() = "id = ${this.id}, displayText = ${this.displayText}, answer = ${answer}"
 }
