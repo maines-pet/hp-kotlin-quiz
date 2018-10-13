@@ -27,6 +27,11 @@ class Webhook {
     @PostMapping("/webhook")
     fun receiveEvents(@RequestBody event: MessengerEvent): ResponseEntity<Any>{
         println(event)
+        //TODO
+        //Validate webhook events
+        // https://developers.facebook.com/docs/messenger-platform/webhook#security
+
+
         return ResponseEntity.ok("Hello")
     }
 
