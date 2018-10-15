@@ -23,35 +23,20 @@ class MessengerProfile() {
     val mapper = jacksonObjectMapper()
 
     val restTemplate: RestTemplate = RestTemplate()
-    val rawUrl: String = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token="
-
     fun setupGreeting(locale: String, text: String){
-
+        //TODO check if accesstoken is set
+//        if(fb.accessToken.isEmpty())
         val uri = UriComponentsBuilder.newInstance()
                 .scheme("https")
                 .host("graph.facebook.com")
                 .path("/v3.1/me/messenger_profile")
                 .queryParam("access_token", fb.accessToken)
-        val url = "https://graph.facebook.com/v2.6/me/messenger_profile?access_token=" + fb.accessToken
-        val welcomeGreeting = WelcomeGreeting(mutableListOf(GreetingLocale(locale, text)))
+                .build().toUri()
+        val body = WelcomeGreeting(mutableListOf(GreetingLocale(locale, text)))
+        println(fb.accessToken)
         try {
-//            println(restTemplate.postForEntity(uri.build().toUri(), welcomeGreeting, String::class.java))
-            val headers = HttpHeaders()
-            headers.setContentType(MediaType.APPLICATION_JSON)
-//            val settings = mapOf("locale" to locale, "text" to text)
-
-//            val bodyreq = mapper.writeValueAsString(mutableMapOf("greeting" to listOf(settings)))
-            val bodyreq = mapper.writeValueAsString(welcomeGreeting)
-
-            val body = HttpEntity<String>(bodyreq, headers)
-
-//            println(restTemplate.postForEntity(url, welcomeGreeting, String::class.java))
-            println(body.body)
-            println(restTemplate.postForEntity(url, body, String::class.java))
-
-
+            println(restTemplate.postForEntity(uri, body, String::class.java))
         } catch (e: HttpStatusCodeException){
-
             println(e.responseBodyAsString)
         }
 

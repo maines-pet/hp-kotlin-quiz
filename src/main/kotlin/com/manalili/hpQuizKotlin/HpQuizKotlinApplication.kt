@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
                         println(questionRepository.findAll())
 
                         //update greetings
-                        msgr.setupGreeting("default", "welcome to kotlin")
+                        msgr.setupGreeting("default", "welcome tod kotlin")
 
                     }
                 }
