@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
 
                         //update greetings
                         msgr.setupGreeting("default", "welcome tod kotlin")
-
+                        msgr.setupGetStarted("get_started")
                     }
                 }
             })
