@@ -1,17 +1,21 @@
 package com.manalili.hpQuizKotlin.fb
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.manalili.hpQuizKotlin.fb.received.MessageContent
+import com.manalili.hpQuizKotlin.fb.received.MessageReceived
+import com.manalili.hpQuizKotlin.fb.received.PostbackMessage
+import com.manalili.hpQuizKotlin.fb.received.SimpleMessage
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.ui.set
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-class Webhook {
+class Webhook(val sendApi: SendService, val messenger: Messenger) {
 
     @GetMapping("/webhook")
     fun verification(@RequestParam verification: Map<String, String>): ResponseEntity<String> {
@@ -26,21 +30,29 @@ class Webhook {
 
     @PostMapping("/webhook")
     fun receiveEvents(@RequestBody event: MessengerEvent): ResponseEntity<Any>{
-        println(event)
+        event.entry.forEach{
+            it.messaging.forEach{payload ->
+                processEvent(payload)
+            }
+        }
+
         //TODO
         //Validate webhook events
         // https://developers.facebook.com/docs/messenger-platform/webhook#security
 
-
         return ResponseEntity.ok("Hello")
     }
 
-//    @PostMapping("/webhook")
-//    fun receiveEvents(@RequestBody event: String): ResponseEntity<Any>{
-//        println(event)
-//        return ResponseEntity.ok("Hello")
-//    }
+    private fun processEvent(event: Any){
+        val json = mapper.writeValueAsString(event)
+        val jsonNode = mapper.readTree(json)
 
+        when {
+            jsonNode["message"] != null -> messenger.onSimpleMessageReceived(json)
+            jsonNode["postback"] != null -> messenger.onPostbackMessageReceived(json)
+            else -> null
+        }
+    }
 }
 
 object Tokens {
@@ -48,4 +60,5 @@ object Tokens {
     const val SUBSCRIBE_MODE = "subscribe"
 }
 
-class Unknown
+val mapper: ObjectMapper = ObjectMapper()
+
