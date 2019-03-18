@@ -16,6 +16,7 @@ body {
     position: fixed;
     height: 100%;
     font: 1em Arial;
+    z-index: 2;
 }
 
 .player-details {
@@ -52,24 +53,47 @@ body {
     height: 100%;
     width: 70%;
     position: fixed;
+    display: grid;
+    grid-template-rows: auto auto;
 }
 
 #question {
     font: 3em Arial;
     color: whitesmoke;
     text-align: center;
+    margin: 0.3em 0;
 }
 
-.choices{
+.choices {
     width: 80%;
     margin: 0 auto;
-    font: 1.5em Arial;
+    font: 1.3em Arial;
 }
 
 .choice {
     background-color: antiquewhite;
-    margin: 1em;
+    /*margin: 0.5em;*/
     padding: 1em;
     text-align: center;
     border-radius: 15px;
+}
+
+#nav-next {
+    position: fixed;
+    z-index: 1;
+    border-radius: 50%;
+    background-color: #bbb;
+    bottom: 30px;
+    left: 30px;
+    height: 50px;
+    width: 50px;
+    color: #ffffff;
+    font-size: 3em;
+    text-align: center;
+    /*display: grid;*/
+    /*grid-template-rows: auto;*/
+
+}
+
+#nav-next span {
 }

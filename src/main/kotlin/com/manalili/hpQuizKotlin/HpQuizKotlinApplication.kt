@@ -24,16 +24,6 @@ fun main(args: Array<String>) {
                     ApplicationRunner{
                         //ref essentially autowires the beans
                         val msgr = ref<MessengerProfile>()
-                        val questionRepository = ref<QuestionRepository>()
-                        val choiceRepository = ref<ChoiceRepository>()
-                        val q = Question(question = "Hello there")
-                        val listOfChoices = listOf(Choice(displayText = "1", answer = true))
-                        q.choice = listOfChoices
-                        questionRepository.save(q)
-                        println(choiceRepository.findById(1))
-//                        val listOfChoices = choiceRepository.save(Choice(displayText = "a", answer = true, question = q))
-//                        arrayOf("Q1", "Q2","Q3").map { questionRepository.save(Question(question = it)) }
-                        println(questionRepository.findAll())
 
                         //update greetings
                         msgr.setupGreeting("default", "welcome tod kotlin")

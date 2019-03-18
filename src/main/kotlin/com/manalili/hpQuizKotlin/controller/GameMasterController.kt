@@ -18,8 +18,13 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
     val questions = mutableListOf<Question>()
     val players = listOf<Player>()
 
+
+    //Landing page
+    @GetMapping(path = ["/welcome", "/"])
+    fun welcome() = "game/welcome"
+
     //initialise game
-    @GetMapping("/welcome")
+    @GetMapping("/quiz")
     fun startGame(model: Model): String{
         questions.addAll(questionRepository.findAll())
         model["current"] = questions[index]
@@ -27,20 +32,5 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
         model["players"] = playerService.playerList
         return "game/quiz"
     }
-
-    @GetMapping("/nexts")
-    @ResponseBody
-    fun nextQuestion(): ResponseEntity<Question> {
-        return if(++index < questions.size) {
-            ResponseEntity(questions[index], HttpStatus.OK)
-        } else {
-            index = 0
-            ResponseEntity(HttpStatus.BAD_GATEWAY)
-            //or return null
-        }
-    }
-    @GetMapping("/{id}")
-    @ResponseBody
-    fun showQuestion(@PathVariable id: Int) = "Your id ${id}"
 
 }
