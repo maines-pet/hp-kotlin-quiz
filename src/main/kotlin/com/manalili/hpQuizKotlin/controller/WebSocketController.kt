@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller
 @Controller
 class WebSocketController {
 
-    @MessageMapping("/greet")
+    @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     fun greeting(message: HelloMessage) = Greeting("Hi there, you are chatting")
 }

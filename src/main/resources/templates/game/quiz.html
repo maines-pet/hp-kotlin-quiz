@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Triwizard Tournament!</title>
+    <link rel="stylesheet" type="text/css" href="/css/quiz.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css/quiz.css">
+
+</head>
+<body>
+<div id="grid-wrapper">
+    <div id="players" th:each="player : ${players}" th:remove="all-but-first">
+        <div class="player-details">
+            <div class="player-name" th:text="${player.name}">Kevin</div>
+            <div class="player-score"th:text="${player.points}">300</div>
+        </div>
+        <div class="player-details">
+            <div class="player-name" th:text="${player.name}">Germaine</div>
+            <div class="player-score"th:text="${player.points}">300</div>
+        </div>
+        <div class="player-details">
+            <div class="player-name" th:text="${player.name}">Joe</div>
+            <div class="player-score"th:text="${player.points}">300</div>
+        </div>
+    </div>
+
+    <div id="question-wrapper">
+        <p th:text="${'Question ' + questionCounter}">Question x</p>
+        <p id="question" th:text="${current.question}">Who killed Dumbledore?</p>
+        <div class="choices" th:each="choice : ${current.choice}" th:remove="all-but-first">
+            <p class="choice" th:text="${choice.displayText}">Snape</p>
+            <p class="choice">Voldemort</p>
+            <p class="choice">Harry Potter</p>
+        </div>
+        <a href="/game/next" th:text="${'The boy who lived'}">next</a>
+    </div>
+</div>
+
+</body>
+</html>

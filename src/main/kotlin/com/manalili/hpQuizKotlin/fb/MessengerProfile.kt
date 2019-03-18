@@ -12,7 +12,7 @@ class MessengerProfile(val sendApi: SendService) {
 
         val body = WelcomeGreeting(mutableListOf(GreetingLocale(locale, text)))
         try {
-            sendApi.send(SendService.MESSENGER_PROFILE, body)
+            sendApi.send(SendService.MESSENGER_PROFILE, body = body)
         } catch (e: HttpStatusCodeException){
             println(e.responseBodyAsString)
         }
@@ -20,6 +20,7 @@ class MessengerProfile(val sendApi: SendService) {
 
     fun setupGetStarted(payload: String){
         val body = mapOf("get_started" to mapOf("payload" to payload))
-        sendApi.send(SendService.MESSENGER_PROFILE, body)
+        sendApi.send(SendService.MESSENGER_PROFILE, body = body)
+                .also { println(it) }
     }
 }

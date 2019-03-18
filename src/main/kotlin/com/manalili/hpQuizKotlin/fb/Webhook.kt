@@ -48,8 +48,8 @@ class Webhook(val sendApi: SendService, val messenger: Messenger) {
         val jsonNode = mapper.readTree(json)
 
         when {
-            jsonNode["message"] != null -> messenger.onSimpleMessageReceived(json)
             jsonNode["postback"] != null -> messenger.onPostbackMessageReceived(json)
+            jsonNode["message"] != null -> messenger.onSimpleMessageReceived(json)
             else -> null
         }
     }

@@ -10,7 +10,7 @@ data class Question(
         val id: Int? = null,
         val question: String = "",
 
-        @OneToMany(cascade = arrayOf(CascadeType.ALL))
+        @OneToMany(cascade = [CascadeType.ALL])
         @JoinColumn(name = "questionIdToChoices", referencedColumnName = "qId")
         var choice: List<Choice>? = listOf()
 ) {
