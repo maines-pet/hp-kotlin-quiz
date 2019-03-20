@@ -1,4 +1,4 @@
 package com.manalili.hpQuizKotlin.model
 
-data class SseRequest(val key: String, val message : String) {
+data class SseRequestMessage(var key: String, var message : String) {
 }

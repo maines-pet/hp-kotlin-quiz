@@ -16,16 +16,14 @@ body {
     position: fixed;
     height: 100%;
     font: 1em Arial;
-    z-index: 2;
+    z-index: 1;
 }
 
 .player-details {
     margin: 1em;
-    padding: 0.5em;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    background: #c5b11e;
+    /*background: #c5b11e;*/
+    display: grid;
+    grid-template-columns: 60% auto;
 }
 
 .player-details * {
@@ -35,12 +33,22 @@ body {
 
 .player-name {
     justify-content: right;
-    width: 57%;
+    box-sizing: border-box;
+    -webkit-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    border-radius: 10px 0 0 10px;
+    background-color: forestgreen;
+    padding: 0.5em 0 0.5em 0.5em;
 }
 
 .player-score {
     text-align: right;
-    width: 40%;
+    box-sizing: border-box;
+    padding: 0.5em 0.5em 0.5em 0;
+    background-color: #5d745e;
+    border-radius: 0 10px 10px 0;
+    margin-left: 0;
+    color: #f1f1f1;
 }
 
 #players p {
@@ -79,8 +87,9 @@ body {
 }
 
 #nav-next {
+    cursor: pointer;
     position: fixed;
-    z-index: 1;
+    z-index: 99;
     border-radius: 50%;
     background-color: #bbb;
     bottom: 30px;
