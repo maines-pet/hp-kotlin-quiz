@@ -15,13 +15,17 @@ class Messenger(val sendApi: SendService,
     fun onSimpleMessageReceived(msg: String) {
         val simpleMessage = readIntoObject<SimpleMessage>(msg)
         val sender = gameService.players[simpleMessage.sender.id]!!
-        if (sender.needName){
+        if (!sender.isNameSet){
             sender.updateName(simpleMessage.message.text)
             val reply =
                     listOf("""Thanks, ${sender.name}.""",
                             "Please wait for other players.",
                             "I'll let you know once we're ready.")
             this.sendApi.sendSimpleReply(sender.id, replyList = reply)
+        }
+        if (!sender.isHouseSorted) {
+            sender.sortToHouse()
+            """You have been sorted to House of ${sender.house}""".apply { this@Messenger.sendApi.sendSimpleReply(sender.id, this) }
         }
     }
 

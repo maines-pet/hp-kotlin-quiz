@@ -24,10 +24,11 @@ body {
     /*background: #c5b11e;*/
     display: grid;
     grid-template-columns: 60% auto;
+    border-radius: 10px;
+    box-shadow: -5px 3px #312727;
 }
 
 .player-details * {
-    color: #fff396;
     display: inline-block;
 }
 
@@ -37,7 +38,6 @@ body {
     -webkit-border-radius: 10px 0 0 10px;
     -moz-border-radius: 10px 0 0 10px;
     border-radius: 10px 0 0 10px;
-    background-color: forestgreen;
     padding: 0.5em 0 0.5em 0.5em;
 }
 
@@ -45,10 +45,8 @@ body {
     text-align: right;
     box-sizing: border-box;
     padding: 0.5em 0.5em 0.5em 0;
-    background-color: #5d745e;
     border-radius: 0 10px 10px 0;
     margin-left: 0;
-    color: #f1f1f1;
 }
 
 #players p {
@@ -105,4 +103,50 @@ body {
 }
 
 #nav-next span {
+}
+
+/*Color paletter for each houses*/
+
+/*Gryffindor*/
+.gf-dark {
+    background-color: #740001;
+    color: #d3a625;
+}
+
+.gf-light {
+    background: #ae0001;
+    color: #eeba30;
+}
+
+/*Slytherin*/
+.sl-dark {
+    background-color: #1a472a;
+    color: #bebebe;
+}
+
+.sl-light {
+    background-color: #2a623d;
+    color: #bebebe;
+}
+
+/*Hufflepuff*/
+.hf-dark {
+    background-color: #726255;
+    color: #ecb939;
+}
+
+.hf-light {
+    background-color: #f0c75e;
+    color: #000000;
+}
+
+/*Ravenclaw*/
+.rc-dark {
+    background-color: 	#0e1a40;
+    color: 	#bfbebe;
+}
+
+.rc-light {
+    background-color: 	#222f5b;
+    color: 	#946b2d;
 }
