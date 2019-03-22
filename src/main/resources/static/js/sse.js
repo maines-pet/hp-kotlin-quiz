@@ -5,7 +5,8 @@ $(document).ready(function () {
 });
 
 var connect = function () {
-    var source = new EventSource('/game/sse');
+    // var source = new EventSource('/game/sse');
+    var source = new EventSource('../sse');
 
     source.addEventListener('open', function (e) {
         console.log(e)

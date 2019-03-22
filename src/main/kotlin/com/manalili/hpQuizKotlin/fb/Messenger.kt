@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class Messenger(val sendApi: SendService,
-                val profileApi: ProfileInformationService,
                 val gameService: GameService) {
     private val mapper = ObjectMapper()
 
@@ -22,10 +21,13 @@ class Messenger(val sendApi: SendService,
                             "Please wait for other players.",
                             "I'll let you know once we're ready.")
             this.sendApi.sendSimpleReply(sender.id, replyList = reply)
+            gameService.checkIfReady()
         }
         if (!sender.isHouseSorted) {
             sender.sortToHouse()
-            """You have been sorted to House of ${sender.house}""".apply { this@Messenger.sendApi.sendSimpleReply(sender.id, this) }
+            """You have been sorted to House of ${sender.house}""".
+                    apply { this@Messenger.sendApi.sendSimpleReply(sender.id, this) }
+            gameService.checkIfReady()
         }
     }
 

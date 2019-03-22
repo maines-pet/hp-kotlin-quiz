@@ -1,11 +1,6 @@
 package com.manalili.hpQuizKotlin.fb
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.manalili.hpQuizKotlin.fb.received.MessageContent
-import com.manalili.hpQuizKotlin.fb.received.MessageReceived
-import com.manalili.hpQuizKotlin.fb.received.PostbackMessage
-import com.manalili.hpQuizKotlin.fb.received.SimpleMessage
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -15,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-class Webhook(val sendApi: SendService, val messenger: Messenger) {
+class Webhook(val sendApi: SendService,
+              val messenger: Messenger) {
 
     @GetMapping("/webhook")
     fun verification(@RequestParam verification: Map<String, String>): ResponseEntity<String> {
