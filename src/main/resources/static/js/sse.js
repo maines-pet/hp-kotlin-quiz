@@ -1,7 +1,8 @@
 $(document).ready(function () {
-    $('#nav-next').click(function () {
+    // $('#nav-next').click(function () {
+    //     connect();
+    // });
         connect();
-    });
 });
 
 var connect = function () {
@@ -16,6 +17,13 @@ var connect = function () {
     source.addEventListener('message', function (evt) {
         console.log(evt.data);
         var message = JSON.parse(evt.data);
+    }, false);
+
+    source.addEventListener('new-player', function (evt) {
+        console.log(evt.data);
+        console.log(evt);
+        console.log('New player has joined');
+        $("#players").append(evt.data);
 
     }, false);
 

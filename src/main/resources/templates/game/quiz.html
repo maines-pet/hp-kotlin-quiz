@@ -13,9 +13,11 @@
 <div id="grid-wrapper">
     <div id="players">
         <div>Players</div>
-        <th:block th:each="player : ${players}" th:remove="all-but-first"
-                  th:with="house=${player.house.shorthand}">
-            <div class="player-details">
+        <th:block th:each="player : ${players}" th:remove="all-but-first">
+            <div th:with="house=${player.house.shorthand}"
+                 th:fragment="player-fragment"
+                 class="player-details"
+                 th:if="${player.readyStatus}" th:id="${player.id}">
                 <div class="player-name" th:classappend="${house + '-dark'}" th:text="${player.name}">Kevin</div>
                 <div class="player-score" th:classappend="${house + '-light'}" th:text="${player.points}">300</div>
             </div>

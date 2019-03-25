@@ -1,6 +1,7 @@
 package com.manalili.hpQuizKotlin.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -10,24 +11,24 @@ class Player(val id: String,
     //    var isNameSet = false
 
     @get:JsonIgnore
-    var isNameSet: Boolean by Delegates.observable(false) { _, _, _ ->
-        this.ready()
-    }
-    //    var isHouseSorted = false
+    var isNameSet: Boolean = false
     @get:JsonIgnore
-    var isHouseSorted: Boolean by Delegates.observable(false) { _, _, _ ->
-        this.ready()
-    }
+    var isHouseSorted: Boolean = false
+
     @get:JsonIgnore
     var house: HogwartsHouse = HogwartsHouse.GRYFFINDOR
+
     @get:JsonIgnore
-    var isReady = false
+    var readyStatus = false
+        get() = isHouseSorted && isNameSet
+
+    @get: JsonIgnore
+    var hasJoined = false
 
     fun updateName(newName: String) {
         this.apply {
             name = newName
             isNameSet = true
-            ready()
         }
     }
 
@@ -35,18 +36,12 @@ class Player(val id: String,
         this.apply {
             house = HogwartsHouse.sortingHat()
             isHouseSorted = true
-            ready()
         }
     }
 
-    private fun ready() {
-        this.apply {
-            if (isNameSet && isHouseSorted) {
-                isReady = true
-            }
-        }
-    }
 
+    @JsonProperty("house")
+    fun houseSerialised() = this.house.shorthand
 }
 
 enum class HogwartsHouse(val shorthand: String) {

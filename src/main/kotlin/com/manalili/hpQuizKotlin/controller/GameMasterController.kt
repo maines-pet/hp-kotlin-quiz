@@ -45,15 +45,4 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
 
     private fun randomise(): String = String.format("%04d", (Math.random() * 10000).roundToInt())
 
-    fun emitPlayer() {
-        sseEmitters.forEach { emitter ->
-            try {
-                emitter.send(ObjectMapper().writeValueAsString(gameService.players.values.first() ), MediaType.APPLICATION_JSON)
-            } catch (e: IOException) {
-                emitter.complete()
-                sseEmitters.remove(emitter)
-                e.printStackTrace()
-            }
-        }
-    }
 }
