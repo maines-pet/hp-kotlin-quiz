@@ -7,10 +7,14 @@ import org.jboss.logging.Logger
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.ui.ModelMap
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.io.IOException
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 
 @Controller
@@ -21,10 +25,8 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
 
     private val logger = Logger.getLogger(GameMasterController::class.java)
 
-    //    private val sseEmitters = ConcurrentHashMap<String, MutableList<SseEmitter>>()
-    private val sseEmitters = mutableListOf<SseEmitter>()
-    var index = 0
-    val questions = mutableListOf<Question>()
+    var index = AtomicInteger(0)
+    val questions = CopyOnWriteArrayList<Question>()
 
 
     //Landing page
@@ -33,14 +35,24 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
 
     //initialise game
     @GetMapping("/quiz")
-    fun startGame(model: Model): String {
+    fun initialise(model: Model): String {
         questions.addAll(questionRepository.findAll())
-        model["current"] = questions[index]
-        model["questionCounter"] = index + 1
+        model["current"] = questions[index.toInt()]
+//        model["questionCounter"] = index + 1
         model["players"] = gameService.players.values
-        //notify all players that the game has just started
-        gameService.notifyPlayers()
+        gameService.gameReady = true
         return "game/quiz"
+    }
+
+    @GetMapping("/quiz/next")
+    fun nextQuestion(model: Model): String{
+        val next = index.addAndGet(1)
+        return if (next >= questions.size) {
+            "/fragment/frag :: end"
+        } else {
+            model["current"] = questions[next]
+            "game/quiz :: question-fragment"
+        }
     }
 
     private fun randomise(): String = String.format("%04d", (Math.random() * 10000).roundToInt())

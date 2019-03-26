@@ -5,6 +5,7 @@ import com.manalili.hpQuizKotlin.fb.received.PostbackMessage
 import com.manalili.hpQuizKotlin.fb.received.SimpleMessage
 import com.manalili.hpQuizKotlin.service.GameService
 import org.springframework.stereotype.Service
+import java.lang.Exception
 
 @Service
 class Messenger(val sendApi: SendService,
@@ -14,20 +15,16 @@ class Messenger(val sendApi: SendService,
     fun onSimpleMessageReceived(msg: String) {
         val simpleMessage = readIntoObject<SimpleMessage>(msg)
         val sender = gameService.players[simpleMessage.sender.id]!!
-        if (!sender.isNameSet){
-            gameService.update(sender.id){ sender.updateName(simpleMessage.message.text)}
-//            sender.updateName(simpleMessage.message.text)
+        if (!sender.isNameSet) {
+            gameService.update(sender.id) {
+                sender.updateName(simpleMessage.message.text)
+                sender.sortToHouse()
+            }
             val reply =
                     listOf("""Thanks, ${sender.name}.""",
-                            "Please wait for other players.",
+                            """You have been sorted to ${sender.house}.""",
                             "I'll let you know once we're ready.")
             this.sendApi.sendSimpleReply(sender.id, replyList = reply)
-        }
-        if (!sender.isHouseSorted) {
-            gameService.update(sender.id) { sender.sortToHouse()}
-//            sender.sortToHouse()
-            """You have been sorted to House of ${sender.house}""".
-                    apply { this@Messenger.sendApi.sendSimpleReply(sender.id, this) }
         }
     }
 
@@ -37,8 +34,8 @@ class Messenger(val sendApi: SendService,
             "get_started" -> getStarted(postbackMessage)
         }
     }
-    private fun getStarted(postbackMessage: PostbackMessage) {
 
+    private fun getStarted(postbackMessage: PostbackMessage) {
         val sender = postbackMessage.sender.id
         gameService.addPlayer(sender)
         sendApi.sendSimpleReply(sender, replyList = listOf("Before we start",

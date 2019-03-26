@@ -1,5 +1,7 @@
 package com.manalili.hpQuizKotlin.model
 
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import javax.persistence.*
 
 @Entity
@@ -10,6 +12,7 @@ data class Question(
         val id: Int? = null,
         val question: String = "",
 
+        @Fetch(FetchMode.JOIN)
         @OneToMany(cascade = [CascadeType.ALL])
         @JoinColumn(name = "questionIdToChoices", referencedColumnName = "qId")
         var choice: List<Choice>? = listOf()
@@ -20,8 +23,6 @@ data class Question(
 }
 
 
-
-
 @Entity
 data class Choice(
         @Id
@@ -30,6 +31,6 @@ data class Choice(
         val displayText: String = "",
         val answer: Boolean = false,
         @Column(name = "questionIdToChoices")
-        val questionId: Int? = null){
-    override fun toString() = "id = ${this.id}, displayText = ${this.displayText}, answer = ${answer}"
+        val questionId: Int? = null) {
+    override fun toString() = "id = ${this.id}, displayText = ${this.displayText}, answer = ${this.answer}"
 }

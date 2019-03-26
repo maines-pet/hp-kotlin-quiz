@@ -1,8 +1,10 @@
 $(document).ready(function () {
-    // $('#nav-next').click(function () {
-    //     connect();
-    // });
-        connect();
+    connect();
+    $("#nav-next").click(function(){
+        $.get("/game/quiz/next", function (data) {
+            $("#question-wrapper").replaceWith(data);
+        });
+    });
 });
 
 var connect = function () {
@@ -10,8 +12,8 @@ var connect = function () {
     var source = new EventSource('../sse');
 
     source.addEventListener('open', function (e) {
-        console.log(e)
-        console.log("connected to sse")
+        console.log(e);
+        console.log("connected to sse");
     });
 
     source.addEventListener('message', function (evt) {
@@ -24,14 +26,17 @@ var connect = function () {
         console.log(evt);
         console.log('New player has joined');
         $("#players").append(evt.data);
-
     }, false);
 
     source.addEventListener('error', function (e) {
-        if (e.readyState == EventSource.CLOSED) {
+        if (e.readyState === EventSource.CLOSED) {
             connect();
         }
 
     }, false);
 
 };
+
+function get() {
+    
+}

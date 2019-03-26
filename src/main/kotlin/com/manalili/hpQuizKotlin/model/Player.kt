@@ -6,9 +6,8 @@ import java.util.*
 import kotlin.properties.Delegates
 
 class Player(val id: String,
-             var name: String = "He/she who must not be named",
+             var name: String = "He who must not be named",
              var points: Int = 0) {
-    //    var isNameSet = false
 
     @get:JsonIgnore
     var isNameSet: Boolean = false

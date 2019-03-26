@@ -40,7 +40,7 @@
         </th:block>
     </div>
 
-    <div id="question-wrapper">
+    <div id="question-wrapper" th:fragment="question-fragment">
         <p id="question" th:text="${current.question}">Who killed Dumbledore?</p>
         <div class="choices">
             <!--/*/ <th:block th:remove="all-but-first"> /*/-->
@@ -51,7 +51,6 @@
             <p class="choice">Harry Potter</p>
             <!--/*/ </th:block> /*/-->
         </div>
-        <!--<a href="/game/next" th:text="${'The boy who lived'}">next</a>-->
     </div>
 
 </div>
