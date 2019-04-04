@@ -9,9 +9,20 @@
     <script type="text/javascript" src="/js/sse.js"></script>
 </head>
 <body>
-<div th:fragment="end">
-    <div>End of quiz</div>
+
+<div class="question-wrapper no-grid" th:fragment="start">
+    <div class="start">START GAME</div>
 </div>
+<div class="question-wrapper no-grid" th:fragment="end">
+    <div class="end">This is the end</div>
+</div>
+
+<div class="question-wrapper no-grid" th:fragment="result">
+    <div class="result" th:text="'The top student' + ${#lists.size(winners) &gt; 1 ? 's' : ''}">Winners</div>
+</div>
+
+
+
 
 </body>
 </html>

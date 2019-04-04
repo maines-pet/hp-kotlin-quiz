@@ -5,7 +5,6 @@ import com.manalili.hpQuizKotlin.fb.received.PostbackMessage
 import com.manalili.hpQuizKotlin.fb.received.SimpleMessage
 import com.manalili.hpQuizKotlin.service.GameService
 import org.springframework.stereotype.Service
-import java.lang.Exception
 
 @Service
 class Messenger(val sendApi: SendService,
@@ -14,8 +13,8 @@ class Messenger(val sendApi: SendService,
 
     fun onSimpleMessageReceived(msg: String) {
         val simpleMessage = readIntoObject<SimpleMessage>(msg)
-        val sender = gameService.players[simpleMessage.sender.id]!!
-        if (!sender.isNameSet) {
+        val sender = gameService.getPlayer(simpleMessage.sender.id)
+        if (sender?.isNameSet == false) {
             gameService.update(sender.id) {
                 sender.updateName(simpleMessage.message.text)
                 sender.sortToHouse()

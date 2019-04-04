@@ -11,43 +11,64 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 import java.io.IOException
-import java.lang.Exception
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Service
 class GameService(val sendApi: SendService) {
-    val players = ConcurrentHashMap<String, Player>()
+    val playersInQueue = ConcurrentHashMap<String, Player>()
+    val activePlayers = ConcurrentHashMap<String, Player>()
     val emitters: CopyOnWriteArrayList<SseEmitter> = CopyOnWriteArrayList()
-    var gameReady = false
-        set(value) {
-            if (value) {
-                field = value
-                notifyPlayers()
-            }
-        }
-    var gameStarted = false
+    var isAcceptingPlayers = AtomicBoolean(false)
+//        set(value) {
+//            if (value.get()) {
+//                field = value
+//                addFromQueueToActive()
+//                notifyPlayers()
+//            }
+//        }
+
+    var gameStarted = AtomicBoolean(false)
+    var gameEnded = AtomicBoolean(false)
 
 
     @Autowired
     lateinit var templateEngine: TemplateEngine
 
     fun notifyPlayers() {
-        this.players.values.forEach {
+        this.activePlayers.values.map { it.id }.forEach {
             sendApi.send(SendService.MESSAGES,
-                    body = MessageToSend(recipient = it.id, message = MessageContent("Game is ready.")))
+                    body = MessageToSend(recipient = it, message = MessageContent("Game is ready.")))
+        }
+//        this.activePlayers.values.forEach {
+//            sendApi.send(SendService.MESSAGES,
+//                    body = MessageToSend(recipient = it.id, message = MessageContent("Game is ready.")))
+//        }
+    }
+
+    private fun addFromQueueToActive() {
+        this.activePlayers.putAll(playersInQueue)
+        this.playersInQueue.clear()
+    }
+
+    //Add to queue if game already started
+    fun addPlayer(id: String) {
+        if (!this.isAcceptingPlayers.get()) {
+            this.playersInQueue.getOrPut(id) { Player(id) }
+        } else {
+            this.activePlayers.getOrPut(id) { Player(id) }
         }
     }
 
-    fun addPlayer(id: String) {
-        if (this.gameStarted) throw Exception()
-        players.getOrPut(id) { Player(id) }
-    }
-
-    fun transmit(payload: Player) {
+    private fun transmit(payload: Player? = null, message: String = "") {
         emitters.forEach { emitter ->
             try {
-                emitter.send(payload, MediaType.APPLICATION_JSON)
+                if (payload == null){
+                    emitter.send(message, MediaType.TEXT_PLAIN)
+                } else {
+                    emitter.send(payload, MediaType.APPLICATION_JSON)
+                }
             } catch (e: IOException) {
                 emitter.complete()
                 emitters.remove(emitter)
@@ -66,36 +87,47 @@ class GameService(val sendApi: SendService) {
 
         //customise sse event to pass an event name for sse.js client to capture and be added as an event
         val sseBuild = SseEmitter.event().data(html).name("new-player")
-        emitters.forEach { emitter ->
+        val emitterIterator = emitters.iterator()
+        val invalidEmitters = mutableListOf<SseEmitter>()
+        while (emitterIterator.hasNext()) {
+            val emitter = emitterIterator.next()
             try {
                 emitter.send(sseBuild)
             } catch (e: IOException) {
                 emitter.complete()
-                emitters.remove(emitter)
+                invalidEmitters.add(emitter)
                 e.printStackTrace()
             }
         }
+        emitters.removeAll(invalidEmitters)
+//        emitters.forEach { emitter ->
+//            try {
+//                emitter.send(sseBuild)
+//            } catch (e: IOException) {
+//                emitter.complete()
+//                emitters.remove(emitter)
+//                e.printStackTrace()
+//            }
+//        }
     }
 
     fun update(id: String, exe: () -> Unit) {
         exe()
-        val player = players[id]!!
-        println(player.readyStatus)
-        if (player.readyStatus) {
-            if (!player.hasJoined) {
-                player.hasJoined = true
-                newPlayerJoining(player)
-                if (this.players.values.all { it.readyStatus }) {
-                    gameStart()
+//        val player = activePlayers[id]!!
+        val player = this.getPlayer(id)
+        if (player?.readyStatus == true) {
+            if (this.isAcceptingPlayers.get()) {
+                if (!player.hasJoined) {
+                    player.hasJoined = true
+                    newPlayerJoining(player)
+                } else {
+                    transmit(player)
                 }
-            } else {
-                transmit(player)
+//                } else {
+//                    transmit(player)
+//                }
             }
         }
-    }
-
-    private fun gameStart() {
-       this.gameStarted = true
     }
 
     fun addEmitter(emitter: SseEmitter) {
@@ -104,6 +136,30 @@ class GameService(val sendApi: SendService) {
 
     fun removeEmitter(emitter: SseEmitter) {
         emitters.remove(emitter)
+    }
+
+    fun getPlayer(id: String): Player? {
+        return playersInQueue[id] ?: activePlayers[id]
+    }
+
+    fun startGame() {
+        isAcceptingPlayers.set(false)
+        this.gameStarted.set(true)
+    }
+
+    fun acceptPlayers(){
+        isAcceptingPlayers.set(true)
+        addFromQueueToActive()
+        notifyPlayers()
+    }
+
+    fun end() {
+        this.gameEnded.set(true)
+        this.transmit(message = "end")
+    }
+
+    fun winner(): List<Player> {
+        return this.activePlayers.values.groupBy { it.points }.maxBy { it.key }?.value!!
     }
 }
 

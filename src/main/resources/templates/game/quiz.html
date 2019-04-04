@@ -5,6 +5,7 @@
     <title>Triwizard Tournament!</title>
     <link rel="stylesheet" type="text/css" href="/css/quiz.css">
     <link rel="stylesheet" type="text/css" href="../../static/css/quiz.css" th:remove="all">
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic|Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="/js/sse.js"></script>
 </head>
@@ -39,8 +40,8 @@
             </div>
         </th:block>
     </div>
-
-    <div id="question-wrapper" th:fragment="question-fragment">
+    <div th:if="${current} == null" th:replace="fragment/frag :: start"></div>
+    <div th:if="${current} != null" class="question-wrapper" th:fragment="question-fragment">
         <p id="question" th:text="${current.question}">Who killed Dumbledore?</p>
         <div class="choices">
             <!--/*/ <th:block th:remove="all-but-first"> /*/-->

@@ -1,18 +1,15 @@
 package com.manalili.hpQuizKotlin.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.manalili.hpQuizKotlin.model.*
+import com.manalili.hpQuizKotlin.model.GameSessionRepository
+import com.manalili.hpQuizKotlin.model.Question
+import com.manalili.hpQuizKotlin.model.QuestionRepository
 import com.manalili.hpQuizKotlin.service.GameService
 import org.jboss.logging.Logger
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.ui.ModelMap
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.ModelAndView
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.io.IOException
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
@@ -28,7 +25,6 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
     var index = AtomicInteger(0)
     val questions = CopyOnWriteArrayList<Question>()
 
-
     //Landing page
     @GetMapping(path = ["/welcome", "/"])
     fun welcome() = "game/welcome"
@@ -37,23 +33,35 @@ class GameMasterController(val sessionRepository: GameSessionRepository,
     @GetMapping("/quiz")
     fun initialise(model: Model): String {
         questions.addAll(questionRepository.findAll())
-        model["current"] = questions[index.toInt()]
-//        model["questionCounter"] = index + 1
-        model["players"] = gameService.players.values
-        gameService.gameReady = true
+        model["players"] = gameService.activePlayers.values
+        gameService.acceptPlayers()
         return "game/quiz"
     }
 
     @GetMapping("/quiz/next")
     fun nextQuestion(model: Model): String{
-        val next = index.addAndGet(1)
-        return if (next >= questions.size) {
-            "/fragment/frag :: end"
+        this.gameService.apply {
+            if (!gameStarted.get()) {
+                startGame()
+            }
+        }
+
+        return if (index.get() >= questions.size) {
+            this.gameService.end()
+            questions.clear()
+            "fragment/frag :: end"
         } else {
-            model["current"] = questions[next]
+            model["current"] = questions[index.getAndAdd(1)]
             "game/quiz :: question-fragment"
         }
     }
+
+    @GetMapping("/quiz/result")
+    fun result(model : Model): String {
+        model["winners"] = this.gameService.winner()
+        return "fragment/frag :: result"
+    }
+
 
     private fun randomise(): String = String.format("%04d", (Math.random() * 10000).roundToInt())
 

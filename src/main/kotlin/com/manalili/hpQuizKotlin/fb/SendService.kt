@@ -38,7 +38,7 @@ class SendService(val fb: FbProperties) {
 
 
     companion object {
-        val MESSAGES = "/messages"
-        val MESSENGER_PROFILE = "/messenger_profile"
+        const val MESSAGES = "/messages"
+        const val MESSENGER_PROFILE = "/messenger_profile"
     }
 }
